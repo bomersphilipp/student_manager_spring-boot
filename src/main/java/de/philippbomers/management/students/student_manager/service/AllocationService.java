@@ -15,7 +15,7 @@ import java.util.Optional;
 @Service
 public class AllocationService {
 
-    // Annotation injection
+    // We use constructor based injection because field based injection is not immutable
 
     private final AllocationRepository allocationRepository;
 

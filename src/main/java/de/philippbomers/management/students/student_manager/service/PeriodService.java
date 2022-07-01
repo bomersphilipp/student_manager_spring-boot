@@ -16,7 +16,7 @@ import java.util.Optional;
 @Service
 public class PeriodService {
 
-    // Annotation injection
+    // We use constructor based injection because field based injection is not immutable
 
     private final PeriodRepository periodRepository;
 

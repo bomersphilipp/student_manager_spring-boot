@@ -16,7 +16,7 @@ import java.util.Optional;
 @Service
 public class ProjectService {
 
-    // Annotation injection
+    // We use constructor based injection because field based injection is not immutable
 
     private final ProjectRepository projectRepository;
 

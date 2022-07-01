@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Service
 public class FileService {
 
-    // Annotation injection
+    // We use constructor based injection because field based injection is not immutable
 
     protected final EmploymentService employmentService;
 
