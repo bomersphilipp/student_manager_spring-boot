@@ -11,7 +11,7 @@ import java.util.Objects;
 
 /**
  * A supporting entity to work with time periods
- * <p>
+ *
  * Getters, Setters, and Constructors are handled by Lombok
  */
 @Entity

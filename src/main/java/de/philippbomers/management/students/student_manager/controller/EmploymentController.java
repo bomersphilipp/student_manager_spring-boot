@@ -30,7 +30,7 @@ public class EmploymentController {
      * @return List with employments
      */
     @GetMapping
-    public List<Employment> getEmployments() {
+    public List<Employment> getEmployments() throws ResponseStatusException {
         try {
             return this.employmentService.getAllEmployments();
         } catch (final Exception e) {
@@ -46,7 +46,7 @@ public class EmploymentController {
      * @return Employment
      */
     @GetMapping(value = "/{id}")
-    public Employment getEmployment(@PathVariable final Long id) {
+    public Employment getEmployment(@PathVariable final Long id) throws ResponseStatusException {
         try {
             return this.employmentService.getEmployment(id).orElseThrow();
         } catch (final Exception e) {
@@ -61,7 +61,7 @@ public class EmploymentController {
      * @return the added employment
      */
     @PutMapping
-    public Employment addEmployment(@Valid @RequestBody final Employment employment) {
+    public Employment addEmployment(@Valid @RequestBody final Employment employment) throws ResponseStatusException {
 
         // Sets ID to null to prevent updating an existing entity
         employment.setId(null);
@@ -80,7 +80,7 @@ public class EmploymentController {
      * @return the updated employment
      */
     @PatchMapping
-    public Employment editEmployment(@Valid @RequestBody final Employment employment) {
+    public Employment editEmployment(@Valid @RequestBody final Employment employment) throws ResponseStatusException {
         try {
             this.employmentService.getEmployment(employment.getId()).orElseThrow();
             return this.employmentService.setEmployment(employment);
@@ -97,7 +97,7 @@ public class EmploymentController {
      * @return deleted employment
      */
     @DeleteMapping(value = "/{id}")
-    public Employment deleteEmployment(@PathVariable final Long id) {
+    public Employment deleteEmployment(@PathVariable final Long id) throws ResponseStatusException {
         try {
             return this.employmentService.deleteEmployment(id).orElseThrow();
         } catch (final Exception e) {

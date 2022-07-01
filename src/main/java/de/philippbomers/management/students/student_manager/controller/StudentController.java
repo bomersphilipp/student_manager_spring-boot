@@ -30,7 +30,7 @@ public class StudentController {
      * @return List with students
      */
     @GetMapping
-    public List<Student> getStudents() {
+    public List<Student> getStudents() throws ResponseStatusException {
         try {
             return this.studentService.getAllStudents();
         } catch (final Exception e) {
@@ -46,7 +46,7 @@ public class StudentController {
      * @return Student
      */
     @GetMapping(value = "/{id}")
-    public Student getStudent(@PathVariable final Long id) {
+    public Student getStudent(@PathVariable final Long id) throws ResponseStatusException {
         try {
             return this.studentService.getStudent(id).orElseThrow();
         } catch (final Exception e) {
@@ -61,7 +61,7 @@ public class StudentController {
      * @return the added student
      */
     @PutMapping
-    public Student addStudent(@Valid @RequestBody final Student student) {
+    public Student addStudent(@Valid @RequestBody final Student student) throws ResponseStatusException {
 
         // Sets ID to null to prevent updating an existing entity
         student.setId(null);
@@ -79,7 +79,7 @@ public class StudentController {
      * @return the updated student
      */
     @PatchMapping
-    public Student editStudent(@Valid @RequestBody final Student student) {
+    public Student editStudent(@Valid @RequestBody final Student student) throws ResponseStatusException {
         try {
             this.studentService.getStudent(student.getId()).orElseThrow();
             return this.studentService.setStudent(student);
@@ -95,7 +95,7 @@ public class StudentController {
      * @return deleted student
      */
     @DeleteMapping(value = "/{id}")
-    public Student deleteStudent(@PathVariable final Long id) {
+    public Student deleteStudent(@PathVariable final Long id) throws ResponseStatusException {
         try {
             return this.studentService.deleteStudent(id).orElseThrow();
         } catch (final Exception e) {

@@ -30,7 +30,7 @@ public class ProjectController {
      * @return List with projects
      */
     @GetMapping
-    public List<Project> getProjects() {
+    public List<Project> getProjects() throws ResponseStatusException {
         try {
             return this.projectService.getAllProjects();
         } catch (final Exception e) {
@@ -46,7 +46,7 @@ public class ProjectController {
      * @return Project
      */
     @GetMapping(value = "/{id}")
-    public Project getProject(@PathVariable final Long id) {
+    public Project getProject(@PathVariable final Long id) throws ResponseStatusException {
         try {
             return this.projectService.getProject(id).orElseThrow();
         } catch (final Exception e) {
@@ -61,7 +61,7 @@ public class ProjectController {
      * @return the added project
      */
     @PutMapping
-    public Project addProject(@Valid @RequestBody final Project project) {
+    public Project addProject(@Valid @RequestBody final Project project) throws ResponseStatusException {
 
         // Sets ID to null to prevent updating an existing entity
         project.setId(null);
@@ -79,7 +79,7 @@ public class ProjectController {
      * @return the updated project
      */
     @PatchMapping
-    public Project editProject(@Valid @RequestBody final Project project) {
+    public Project editProject(@Valid @RequestBody final Project project) throws ResponseStatusException {
         try {
             this.projectService.getProject(project.getId()).orElseThrow();
             return this.projectService.setProject(project);
@@ -95,7 +95,7 @@ public class ProjectController {
      * @return the deleted project
      */
     @DeleteMapping(value = "/{id}")
-    public Project deleteProject(@PathVariable final Long id) {
+    public Project deleteProject(@PathVariable final Long id) throws ResponseStatusException {
         try {
             return this.projectService.deleteProject(id).orElseThrow();
         } catch (final Exception e) {

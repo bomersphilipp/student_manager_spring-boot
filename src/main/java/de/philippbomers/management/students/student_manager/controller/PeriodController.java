@@ -30,7 +30,7 @@ public class PeriodController {
      * @return List with periods
      */
     @GetMapping
-    public List<Period> getPeriods() {
+    public List<Period> getPeriods() throws ResponseStatusException {
         try {
             return this.periodService.getAllPeriods();
         } catch (final Exception e) {
@@ -46,7 +46,7 @@ public class PeriodController {
      * @return Period
      */
     @GetMapping(value = "/{id}")
-    public Period getPeriod(@PathVariable final Long id) {
+    public Period getPeriod(@PathVariable final Long id) throws ResponseStatusException {
         try {
             return this.periodService.getPeriod(id).orElseThrow();
         } catch (final Exception e) {
@@ -61,7 +61,7 @@ public class PeriodController {
      * @return the added period
      */
     @PutMapping
-    public Period addPeriod(@Valid @RequestBody final Period period) {
+    public Period addPeriod(@Valid @RequestBody final Period period) throws ResponseStatusException {
 
         // Sets ID to null to prevent updating an existing entity
         period.setId(null);
@@ -79,7 +79,7 @@ public class PeriodController {
      * @return the updated period
      */
     @PatchMapping
-    public Period editPeriod(@Valid @RequestBody final Period period) {
+    public Period editPeriod(@Valid @RequestBody final Period period) throws ResponseStatusException {
         try {
             this.periodService.getPeriod(period.getId()).orElseThrow();
             return this.periodService.setPeriod(period);
@@ -95,7 +95,7 @@ public class PeriodController {
      * @return deleted period
      */
     @DeleteMapping(value = "/{id}")
-    public Period deletePeriod(@PathVariable final Long id) {
+    public Period deletePeriod(@PathVariable final Long id) throws ResponseStatusException {
         try {
             return this.periodService.deletePeriod(id).orElseThrow();
         } catch (final Exception e) {

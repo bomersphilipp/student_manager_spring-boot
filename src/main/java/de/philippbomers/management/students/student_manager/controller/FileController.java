@@ -32,7 +32,7 @@ public class FileController {
      * @return String with report of data saving
      */
     @PostMapping
-    public String uploadExcelFile(@RequestParam("file") final MultipartFile file) {
+    public String uploadExcelFile(@RequestParam("file") final MultipartFile file) throws ResponseStatusException {
         try {
             final String result = this.fileService.importExcelFile(file);
 

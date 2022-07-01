@@ -30,7 +30,7 @@ public class AllocationController {
      * @return List with allocations
      */
     @GetMapping
-    public List<Allocation> getAllocations() {
+    public List<Allocation> getAllocations() throws ResponseStatusException {
         try {
             return this.allocationService.getAllAllocations();
         } catch (final Exception e) {
@@ -46,7 +46,7 @@ public class AllocationController {
      * @return Allocation
      */
     @GetMapping(value = "/{id}")
-    public Allocation getAllocation(@PathVariable final Long id) {
+    public Allocation getAllocation(@PathVariable final Long id) throws ResponseStatusException {
         try {
             return this.allocationService.getAllocation(id).orElseThrow();
         } catch (final Exception e) {
@@ -61,7 +61,7 @@ public class AllocationController {
      * @return the added allocation
      */
     @PutMapping
-    public Allocation addAllocation(@Valid @RequestBody final Allocation allocation) {
+    public Allocation addAllocation(@Valid @RequestBody final Allocation allocation) throws ResponseStatusException {
 
         // Sets ID to null to prevent updating an existing entity
         allocation.setId(null);
@@ -85,7 +85,7 @@ public class AllocationController {
      * @return the updated allocation
      */
     @PatchMapping
-    public Allocation editAllocation(@Valid @RequestBody final Allocation allocation) {
+    public Allocation editAllocation(@Valid @RequestBody final Allocation allocation) throws ResponseStatusException {
         try {
             this.allocationService.getAllocation(allocation.getId()).orElseThrow();
             final Allocation alloc = this.allocationService.setAllocation(allocation);
@@ -106,7 +106,7 @@ public class AllocationController {
      * @return deleted allocation
      */
     @DeleteMapping(value = "/{id}")
-    public Allocation deleteAllocation(@PathVariable final Long id) {
+    public Allocation deleteAllocation(@PathVariable final Long id) throws ResponseStatusException {
         try {
             return this.allocationService.deleteAllocation(id).orElseThrow();
         } catch (final Exception e) {
