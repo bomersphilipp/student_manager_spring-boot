@@ -63,15 +63,15 @@ public class ProjectService {
      */
     public Optional<Project> deleteProject(final Long id) {
         final Optional<Project> project = this.projectRepository.findById(id);
-        if (project.isPresent()) {
+        project.ifPresent(value -> {
 
             // Deletes all allocations for that project
             this.allocationRepository.findAll().stream()
-                    .filter(alloc -> alloc.getProject().equals(project.get()))
+                    .filter(alloc -> alloc.getProject().equals(value))
                     .forEach(alloc -> allocationRepository.deleteById(alloc.getId()));
 
             this.projectRepository.deleteById(id);
-        }
+        });
         return project;
     }
 }

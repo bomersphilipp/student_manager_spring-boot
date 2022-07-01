@@ -82,10 +82,10 @@ public class AllocationService {
      */
     public Optional<Allocation> deleteAllocation(final Long id) {
         final Optional<Allocation> allocation = this.allocationRepository.findById(id);
-        if (allocation.isPresent()) {
+        allocation.ifPresent(value -> {
             this.allocationRepository.deleteById(id);
-            this.periodRepository.delete(allocation.get().getPeriod());
-        }
+            this.periodRepository.delete(value.getPeriod());
+        });
         return allocation;
     }
 }

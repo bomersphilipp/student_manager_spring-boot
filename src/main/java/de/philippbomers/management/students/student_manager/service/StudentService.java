@@ -63,15 +63,15 @@ public class StudentService {
      */
     public Optional<Student> deleteStudent(final Long id) {
         final Optional<Student> student = this.studentRepository.findById(id);
-        if (student.isPresent()) {
+        student.ifPresent(value -> {
 
             // Deletes all allocations with that student
             this.allocationRepository.findAll().stream()
-                    .filter(alloc -> alloc.getStudent().equals(student.get()))
+                    .filter(alloc -> alloc.getStudent().equals(value))
                     .forEach(alloc -> this.allocationRepository.deleteById(alloc.getId()));
 
             this.studentRepository.deleteById(id);
-        }
+        });
         return student;
     }
 }

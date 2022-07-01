@@ -40,7 +40,7 @@ public class AllocationControllerTest extends StudentManagerTest {
 
         // Controller throws exception if data is invalid
         assertThrows(ResponseStatusException.class,
-                () -> this.allocationController.addAllocation(new Allocation()));
+                () -> this.allocationController.addAllocation(Allocation.builder().build()));
 
         this.allocationService.getAllAllocations().forEach(
                 alloc -> this.allocationService.deleteAllocation(alloc.getId()));

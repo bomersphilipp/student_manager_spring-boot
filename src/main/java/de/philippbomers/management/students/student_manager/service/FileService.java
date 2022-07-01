@@ -106,7 +106,7 @@ public class FileService {
             workbook = new XSSFWorkbook(fileInputStream);
 
 
-        } catch (final Exception e) {
+        } catch (final IOException e) {
             // Return an error message
             return "The file could not be opened or read.";
         }
@@ -200,7 +200,7 @@ public class FileService {
             // Deletes the file from server
             assert file.delete() : "File could not be deleted from Server.";
 
-        } catch (final Exception e) {
+        } catch (final IOException e) {
 
             // Collects exceptions
             issueCollector.get().append("Server issue: ").append(e).append("\n");
