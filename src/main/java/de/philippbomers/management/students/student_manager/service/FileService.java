@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 public class FileService {
@@ -90,7 +91,7 @@ public class FileService {
         FileInputStream fileInputStream;
         XSSFWorkbook workbook;
         XSSFSheet sheet;
-        final StringBuilder issueCollector = new StringBuilder();
+        final AtomicReference<StringBuilder> issueCollector = new AtomicReference<>(new StringBuilder());
 
         try {
 
@@ -119,26 +120,26 @@ public class FileService {
         sheet = workbook.getSheetAt(sheetNumber);
 
         // Iterate through each row one by one
-        final Iterator<Row> rowIterator = sheet.iterator();
+        final AtomicReference<Iterator<Row>> rowIterator = new AtomicReference<>(sheet.iterator());
 
         // call cellIterator to continue or break over multiple loops
         cellIterator:
-        while (rowIterator.hasNext()) {
-            final Row row = rowIterator.next();
+        while (rowIterator.get().hasNext()) {
+            final AtomicReference<Row> row = new AtomicReference<>(rowIterator.get().next());
 
             // Selects the actual field
             final AtomicInteger actualNumber = new AtomicInteger(0);
 
             // Checks if the table content row begins
-            if (row.getRowNum() >= beginAtRow) {
+            if (row.get().getRowNum() >= beginAtRow) {
 
                 // For each row, iterates through all the columns
-                final Iterator<Cell> cellIterator = row.cellIterator();
+                final Iterator<Cell> cellIterator = row.get().cellIterator();
                 while (cellIterator.hasNext()) {
-                    final Cell cell = cellIterator.next();
+                    final AtomicReference<Cell> cell = new AtomicReference<>(cellIterator.next());
 
                     // checks if the table content column begins
-                    if (cell.getColumnIndex() >= beginAtColumn) {
+                    if (cell.get().getColumnIndex() >= beginAtColumn) {
 
                         try {
                             /*
@@ -147,7 +148,7 @@ public class FileService {
                              */
 
                             // reads the current field with the correct format
-                            this.setCurrentField(cell);
+                            this.setCurrentField(cell.get());
 
                             // sets the entity field for later save in database
                             this.addEntities(actualNumber.getAndIncrement());
@@ -155,8 +156,8 @@ public class FileService {
                         } catch (final Exception e) {
 
                             // Collects exceptions
-                            issueCollector.append("Row: ").append(cell.getRowIndex())
-                                    .append(", Column: ").append(cell.getColumnIndex()).append(": ")
+                            issueCollector.get().append("Row: ").append(cell.get().getRowIndex())
+                                    .append(", Column: ").append(cell.get().getColumnIndex()).append(": ")
                                     .append(e).append(employmentName).append('\n');
 
                             // Clears variables for next iteration
@@ -173,9 +174,9 @@ public class FileService {
             try {
 
                 // checks if all values are set
-                if (!Objects.equals(this.firstName, "") && !Objects.equals(this.lastName, "") && !Objects.equals(this.employmentName, "")
-                        && this.projectFrom != null && this.projectTo != null
-                        && this.allocationFrom != null && this.allocationTo != null) {
+                if (!(Objects.equals(this.firstName, "") || Objects.equals(this.lastName, "") || Objects.equals(this.employmentName, "")
+                        || this.projectFrom == null || this.projectTo == null
+                        || this.allocationFrom == null || this.allocationTo == null)) {
                     // Saves the row to database
                     this.saveToDatabase();
                 }
@@ -183,7 +184,7 @@ public class FileService {
             } catch (final Exception e) {
 
                 // Collects exceptions
-                issueCollector.append("Server issue: ").append(e).append("\n");
+                issueCollector.get().append("Server issue: ").append(e).append("\n");
 
             }
 
@@ -197,18 +198,16 @@ public class FileService {
             workbook.close();
 
             // Deletes the file from server
-            if (!file.delete()) {
-                throw new Exception("File could not be deleted from Server.");
-            }
+            assert file.delete() : "File could not be deleted from Server.";
 
         } catch (final Exception e) {
 
             // Collects exceptions
-            issueCollector.append("Server issue: ").append(e).append("\n");
+            issueCollector.get().append("Server issue: ").append(e).append("\n");
         }
 
         // Returns success message with exception hints
-        return issueCollector.append("\n").append("Upload Success!").toString();
+        return issueCollector.get().append("\n").append("Upload Success!").toString();
     }
 
     /**
@@ -265,10 +264,10 @@ public class FileService {
 
             // Adds project
             // If the project does not exist, creates a new one including the given period.
-            final Optional<Project> findProject = this.projectService.getAllProjects().stream()
-                    .filter(project -> project.getName().equals(this.projectName)).findFirst();
+            final AtomicReference<Optional<Project>> findProject = new AtomicReference<>(this.projectService.getAllProjects().stream()
+                    .filter(project -> project.getName().equals(this.projectName)).findFirst());
 
-            currentProject = findProject.orElseGet(() -> this.projectService.setProject(Project
+            currentProject = findProject.get().orElseGet(() -> this.projectService.setProject(Project
                     .builder().name(this.projectName).period(Period.builder()
                             .begin(this.projectFrom).end(this.projectTo).build())
                     .build()));
@@ -283,15 +282,15 @@ public class FileService {
 
             // Adds allocation
             // If the allocation does not exist, it creates a new one
-            final Optional<Allocation> findAllocation = this.allocationService.getAllAllocations()
+            final AtomicReference<Optional<Allocation>> findAllocation = new AtomicReference<>(this.allocationService.getAllAllocations()
                     .stream()
                     .filter(alloc -> alloc.getPeriod().getBegin().equals(this.allocationFrom)
                             && alloc.getPeriod().getEnd().equals(this.allocationTo)
                             && alloc.getProject().equals(currentProject)
                             && alloc.getStudent().equals(currentStudent))
-                    .findFirst();
+                    .findFirst());
 
-            if (findAllocation.isEmpty()) {
+            if (findAllocation.get().isEmpty()) {
                 this.allocationService.setAllocation(Allocation
                         .builder().project(currentProject).period(Period.builder()
                                 .begin(this.projectFrom).end(this.projectTo).build())
@@ -423,18 +422,18 @@ public class FileService {
           TODO: Add the sources path.
          */
         // Creates the filepath with filename
-        final String filePath = multipart.getOriginalFilename();
+        final AtomicReference<String> filePath = new AtomicReference<>(multipart.getOriginalFilename());
 
         // Creates new and empty file
-        assert filePath != null;
-        File convFile = new File(filePath);
+        assert filePath.get() != null;
+        AtomicReference<File> convFile = new AtomicReference<>(new File(filePath.get()));
 
         // Fills the file with content from multipart
-        multipart.transferTo(Path.of(filePath));
+        multipart.transferTo(Path.of(filePath.get()));
 
         // Saves the new File
-        convFile.createNewFile();
+        convFile.get().createNewFile();
 
-        return convFile;
+        return convFile.get();
     }
 }

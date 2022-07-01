@@ -8,6 +8,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * API Rest Controller to handle allocations
@@ -88,12 +89,12 @@ public class AllocationController {
     public Allocation editAllocation(@Valid @RequestBody final Allocation allocation) throws ResponseStatusException {
         try {
             this.allocationService.getAllocation(allocation.getId()).orElseThrow();
-            final Allocation alloc = this.allocationService.setAllocation(allocation);
-            if (alloc == null) {
+            final AtomicReference<Allocation> alloc = new AtomicReference<>(this.allocationService.setAllocation(allocation));
+            if (alloc.get() == null) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT,
                         "Please check the time periods");
             }
-            return alloc;
+            return alloc.get();
         } catch (final Exception e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Could not update allocation");
         }
