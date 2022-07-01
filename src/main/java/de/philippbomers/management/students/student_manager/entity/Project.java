@@ -9,7 +9,7 @@ import java.util.Objects;
 
 /**
  * Defines and declares Projects
- *
+ * <p>
  * Getters, Setters, and Constructors are handled by Lombok
  */
 @Entity

@@ -14,10 +14,10 @@ import java.time.YearMonth;
 
 /**
  * DATA LOSS ALERT: DO NOT USE IN PRODUCTIVE ENVIRONMENT Only for development use with test database
- *
+ * <p>
  * This parent class makes the controller tests easier. Testing controller methods. Tests can be run
  * independent of each other.
- *
+ * <p>
  * To start the tests in Windows, you need to declare the JAVA_HOME variable. Further, you cannot
  * test an already running system on the same port.
  */

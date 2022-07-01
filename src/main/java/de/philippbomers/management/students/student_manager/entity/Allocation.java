@@ -9,7 +9,7 @@ import java.util.Objects;
 
 /**
  * Associates a student to projects for specific time periods
- *
+ * <p>
  * Getters, Setters, and Constructors are handled by Lombok
  */
 @Entity

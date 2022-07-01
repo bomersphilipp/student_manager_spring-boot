@@ -9,7 +9,7 @@ import java.util.Objects;
 
 /**
  * Defines and declares students
- *
+ * <p>
  * Getters, Setters, and Constructors are handled by Lombok
  */
 @Entity

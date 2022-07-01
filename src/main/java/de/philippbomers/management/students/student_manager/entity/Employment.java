@@ -15,7 +15,7 @@ import java.util.Objects;
 
 /**
  * Defines the employment of a student: f.ex. Werkstudent, Praktikant, Absolvent
- *
+ * <p>
  * Getters, Setters, and Constructors are handled by Lombok
  */
 @Entity
