@@ -87,6 +87,10 @@ public class FileService {
           TODO: Shorten this method
          */
 
+         /*
+          * TODO: issueCollector - write easily readable exception messages for users
+          */
+
         File file;
         FileInputStream fileInputStream;
         XSSFWorkbook workbook;
