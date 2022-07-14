@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
@@ -87,9 +88,9 @@ public class FileService {
           TODO: Shorten this method
          */
 
-         /*
-          * TODO: issueCollector - write easily readable exception messages for users
-          */
+        /*
+         * TODO: issueCollector - write easily readable exception messages for users
+         */
 
         File file;
         FileInputStream fileInputStream;
@@ -110,7 +111,7 @@ public class FileService {
             workbook = new XSSFWorkbook(fileInputStream);
 
 
-        } catch (final IOException e) {
+        } catch (IOException e) {
             // Return an error message
             return "The file could not be opened or read.";
         }
@@ -138,9 +139,9 @@ public class FileService {
             if (row.get().getRowNum() >= beginAtRow) {
 
                 // For each row, iterates through all the columns
-                final Iterator<Cell> cellIterator = row.get().cellIterator();
-                while (cellIterator.hasNext()) {
-                    final AtomicReference<Cell> cell = new AtomicReference<>(cellIterator.next());
+                final AtomicReference<Iterator<Cell>> cellIterator = new AtomicReference<>(row.get().cellIterator());
+                while (cellIterator.get().hasNext()) {
+                    final AtomicReference<Cell> cell = new AtomicReference<>(cellIterator.get().next());
 
                     // checks if the table content column begins
                     if (cell.get().getColumnIndex() >= beginAtColumn) {
@@ -170,25 +171,19 @@ public class FileService {
                             // Continues iteration without saving to database
                             continue cellIterator;
                         }
-
                     }
                 }
             }
 
             try {
 
-                // checks if all values are set
-                if (!(Objects.equals(this.firstName, "") || Objects.equals(this.lastName, "") || Objects.equals(this.employmentName, "")
-                        || this.projectFrom == null || this.projectTo == null
-                        || this.allocationFrom == null || this.allocationTo == null)) {
-                    // Saves the row to database
-                    this.saveToDatabase();
-                }
+                // Saves the row to database
+                this.saveToDatabase();
 
             } catch (final Exception e) {
 
                 // Collects exceptions
-                issueCollector.get().append("Server issue: ").append(e).append("\n");
+                issueCollector.get().append("Server issue: ").append(e.getMessage()).append("\n");
 
             }
 
@@ -201,14 +196,16 @@ public class FileService {
             fileInputStream.close();
             workbook.close();
 
-            // Deletes the file from server
-            assert file.delete() : "File could not be deleted from Server.";
-
         } catch (final IOException e) {
 
             // Collects exceptions
-            issueCollector.get().append("Server issue: ").append(e).append("\n");
+            issueCollector.get().append("Server issue: ").append(e.getMessage()).append("\n");
         }
+
+
+        // Deletes the file from server
+        assert file.delete() : "File could not be deleted from Server.";
+        file.delete();
 
         // Returns success message with exception hints
         return issueCollector.get().append("\n").append("Upload Success!").toString();
